@@ -18,7 +18,7 @@ public class PlayerMover : MonoBehaviour
     private Vector3 moveDir;
     private float ySpeed = 0;
     private bool walk = false;
-
+    
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -42,10 +42,11 @@ public class PlayerMover : MonoBehaviour
     {
         while (true)
         {
-            if (walk)
+            if (walk) // 걷기 체크
             {
-                controller.Move(transform.forward * moveDir.z * walkSpeed * Time.deltaTime);
-                controller.Move(transform.right * moveDir.x * walkSpeed * Time.deltaTime);
+                // 로컬 기준으로 이동
+                controller.Move(transform.forward * moveDir.z * walkSpeed * Time.deltaTime); 
+                controller.Move(transform.right * moveDir.x * walkSpeed * Time.deltaTime); 
             }
             else
             {
@@ -53,8 +54,8 @@ public class PlayerMover : MonoBehaviour
                 controller.Move(transform.right * moveDir.x * moveSpeed * Time.deltaTime);
             }
 
-            //animator.SetFloat("XInput", moveDir.x, 0.1f, Time.deltaTime);
-            //animator.SetFloat("YInput", moveDir.z, 0.1f, Time.deltaTime);
+            animator.SetFloat("XInput", moveDir.x, 0.1f, Time.deltaTime);
+            animator.SetFloat("YInput", moveDir.z, 0.1f, Time.deltaTime);
 
             yield return null;
         }
@@ -80,7 +81,7 @@ public class PlayerMover : MonoBehaviour
         Vector2 input = value.Get<Vector2>();
         moveDir = new Vector3(input.x, 0, input.y);
 
-        //animator.SetBool("Move", input.sqrMagnitude > 0);
+        animator.SetBool("Move", input.sqrMagnitude > 0);
     }
 
     private void OnJump(InputValue value)
@@ -88,12 +89,19 @@ public class PlayerMover : MonoBehaviour
         if (GroundCheck())
             ySpeed = jumpSpeed;
     }
+    
+    private void OnDance(InputValue value) 
+    {
+        animator.SetTrigger("Dance");
+
+    }
 
     private void OnWalk(InputValue value)
     {
+     
         walk = value.isPressed;
 
-        //animator.SetBool("Walk", walk);
+        animator.SetBool("Walk", walk);
     }
 
     private void OnDrawGizmos()
