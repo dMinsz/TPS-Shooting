@@ -18,7 +18,15 @@ public class PlayerMover : MonoBehaviour
     private Vector3 moveDir;
     private float ySpeed = 0;
     private bool walk = false;
-    
+
+    private bool isGround = false;
+
+
+    private void FixedUpdate()
+    {
+        GroundCheck();
+    }
+
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -68,7 +76,7 @@ public class PlayerMover : MonoBehaviour
         {
             ySpeed += Physics.gravity.y * Time.deltaTime;
 
-            if (GroundCheck() && ySpeed < 0)
+            if (isGround && ySpeed < 0)
                 ySpeed = -1;
 
             controller.Move(Vector3.up * ySpeed * Time.deltaTime);
@@ -86,7 +94,7 @@ public class PlayerMover : MonoBehaviour
 
     private void OnJump(InputValue value)
     {
-        if (GroundCheck())
+        if (isGround)
             ySpeed = jumpSpeed;
     }
     
@@ -110,11 +118,11 @@ public class PlayerMover : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, 0.6f);
     }
 
-    private bool GroundCheck()
+    private void GroundCheck()
     {
         RaycastHit hit;
 
-        return Physics.SphereCast(transform.position + Vector3.up * 1, 0.5f, Vector3.down, out hit, 0.6f, LayerMask.GetMask("Enviroment"));
+        isGround =  Physics.SphereCast(transform.position + Vector3.up * 1, 0.5f, Vector3.down, out hit, 0.6f, LayerMask.GetMask("Enviroment"));
         //return Physics.SphereCast(transform.position , 0.5f, Vector3.down, out hit, 0.6f);
     }
 }
