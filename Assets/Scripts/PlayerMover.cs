@@ -5,10 +5,11 @@ using UnityEngine.InputSystem;
 
 public class PlayerMover : MonoBehaviour
 {
-    [SerializeField]
-    private float moveSpeed;
+    private float moveSpeed = 0;
     [SerializeField]
     private float walkSpeed;
+    [SerializeField]
+    private float runSpeed;
     [SerializeField]
     private float jumpSpeed;
 
@@ -48,19 +49,29 @@ public class PlayerMover : MonoBehaviour
     Coroutine moveRoutine;
     private IEnumerator MoveRoutine()
     {
+       
         while (true)
         {
             if (walk) // 걷기 체크
             {
+
+                moveSpeed = Mathf.Lerp(moveSpeed, walkSpeed, 0.1f);
+
                 // 로컬 기준으로 이동
-                controller.Move(transform.forward * moveDir.z * walkSpeed * Time.deltaTime); 
-                controller.Move(transform.right * moveDir.x * walkSpeed * Time.deltaTime); 
+                //controller.Move(transform.forward * moveDir.z * walkSpeed * Time.deltaTime); 
+                //controller.Move(transform.right * moveDir.x * walkSpeed * Time.deltaTime); 
             }
             else
             {
-                controller.Move(transform.forward * moveDir.z * moveSpeed * Time.deltaTime);
-                controller.Move(transform.right * moveDir.x * moveSpeed * Time.deltaTime);
+
+                moveSpeed = Mathf.Lerp(moveSpeed, runSpeed, 0.1f);
+
+                //controller.Move(transform.forward * moveDir.z * moveSpeed * Time.deltaTime);
+                //controller.Move(transform.right * moveDir.x * moveSpeed * Time.deltaTime);
             }
+
+            controller.Move(transform.forward * moveDir.z * moveSpeed * Time.deltaTime);
+            controller.Move(transform.right * moveDir.x * moveSpeed * Time.deltaTime);
 
             animator.SetFloat("XInput", moveDir.x, 0.1f, Time.deltaTime);
             animator.SetFloat("YInput", moveDir.z, 0.1f, Time.deltaTime);

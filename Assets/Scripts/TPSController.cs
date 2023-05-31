@@ -9,9 +9,11 @@ public class TPSController : MonoBehaviour
     [SerializeField] private Transform cameraRoot;
     [SerializeField] private GameObject character;
 
-    [SerializeField] private float LookDistance = 20.0f;
+    [SerializeField] private float lookDistance = 20.0f;
     [SerializeField] private float mouseSensitivity;
 
+
+    [SerializeField]  private Transform aimTarget;
 
     private Vector2 lookDelta;
     private float xRotation;
@@ -41,10 +43,12 @@ public class TPSController : MonoBehaviour
     {
         //character.transform.position = Camera.main.transform.position + Camera.main.transform.forward * LookDistance;
         //Vector3 point = character.transform.position;
-        Vector3 point = Camera.main.transform.position + Camera.main.transform.forward * LookDistance;
+        Vector3 point = Camera.main.transform.position + Camera.main.transform.forward * lookDistance;
+        aimTarget.position = point;
         point.y = character.transform.position.y;
         //point.y = 0;
         character.transform.LookAt(point);
+
     }
 
     private void Look()
