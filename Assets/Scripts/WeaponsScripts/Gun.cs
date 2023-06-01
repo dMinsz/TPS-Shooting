@@ -35,12 +35,12 @@ public class Gun : MonoBehaviour
             IHittable target = hit.transform.GetComponent<IHittable>();
             
             //맞은거 이펙트
-            var effect =Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal)); // 히트 된 위치의 직교하게 만들어준다.
+            var effect = Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal)); // 히트 된 위치의 직교하게 만들어준다.
             effect.transform.parent = hit.transform;//맞은오브젝트 따라가기
 
             //총알 움직이는 궤도 이펙트
-            var trail = Instantiate(bulletTrail,muzzleEffect.transform.position,Quaternion.identity);
-            StartCoroutine(TrailRoutine(trail, trail.transform.position, hit.point));
+            //var trail = Instantiate(bulletTrail,muzzleEffect.transform.position,Quaternion.identity);
+            StartCoroutine(TrailRoutine(muzzleEffect.transform.position, hit.point));
 
             target?.Hit(hit, damage);
 
@@ -48,15 +48,15 @@ public class Gun : MonoBehaviour
         else
         {
             //히트가안됬을때도 발사 궤적 이펙트는 나와야함
-            TrailRenderer trail = Instantiate(bulletTrail, muzzleEffect.transform.position, Quaternion.identity);
-            StartCoroutine(TrailRoutine(trail, trail.transform.position, Camera.main.transform.forward * maxDistance));
-            Destroy(trail.gameObject, 3f);
+            //TrailRenderer trail = Instantiate(bulletTrail, muzzleEffect.transform.position, Quaternion.identity);
+            StartCoroutine(TrailRoutine(muzzleEffect.transform.position, hit.point));
+          
         }
     }
 
-    IEnumerator TrailRoutine(TrailRenderer trail, Vector3 startPoint, Vector3 endPoint)
+    IEnumerator TrailRoutine(Vector3 startPoint, Vector3 endPoint)
     {
-        
+        TrailRenderer trail = Instantiate(bulletTrail, muzzleEffect.transform.position, Quaternion.identity);
         float totalTime = Vector2.Distance(startPoint, endPoint) / maxDistance;
 
         float time = 0;
@@ -64,8 +64,11 @@ public class Gun : MonoBehaviour
         {
             trail.transform.position = Vector3.Lerp(startPoint, endPoint, time);
             time += Time.deltaTime / totalTime;
+            
 
             yield return null;
         }
+
+        Destroy(trail.transform.gameObject);
     }
 }
