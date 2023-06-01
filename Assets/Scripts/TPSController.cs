@@ -12,8 +12,7 @@ public class TPSController : MonoBehaviour
     [SerializeField] private float lookDistance = 20.0f;
     [SerializeField] private float mouseSensitivity;
 
-
-    [SerializeField]  private Transform aimTarget;
+    [SerializeField] private Transform aimTarget;
 
     private Vector2 lookDelta;
     private float xRotation;
