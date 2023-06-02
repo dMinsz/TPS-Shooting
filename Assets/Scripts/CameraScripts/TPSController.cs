@@ -47,7 +47,7 @@ public class TPSController : MonoBehaviour
         point.y = character.transform.position.y;
         //point.y = 0;
         character.transform.LookAt(point);
-
+        
     }
 
     private void Look()

@@ -10,6 +10,7 @@ public class FPSCameraController : MonoBehaviour
     [SerializeField] private Transform cameraRoot;
     [SerializeField] private Transform characterHead;
     [SerializeField] private float mouseSensitivity;
+    
 
     private Vector2 lookDelta;
     private float xRotation;
@@ -50,6 +51,7 @@ public class FPSCameraController : MonoBehaviour
     private void RotateCharacter() 
     {
         Vector3 point = Camera.main.transform.position + Camera.main.transform.forward;
+      
         point.y = characterHead.transform.position.y;
         characterHead.transform.LookAt(point);
     }
