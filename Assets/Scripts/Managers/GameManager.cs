@@ -8,11 +8,12 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager instance;
     private static PoolManager poolManager;
-    
+    private static ResourceManager resourceManager;
+
 
     public static GameManager Instance { get { return instance; } }
     public static PoolManager Pool { get { return poolManager; } }
-   
+    public static ResourceManager Resource { get { return resourceManager; } }
 
     private void Awake()
     {
@@ -39,5 +40,10 @@ public class GameManager : MonoBehaviour
         poolObj.name = "PoolManager";
         poolObj.transform.parent = transform;
         poolManager = poolObj.AddComponent<PoolManager>();
+
+        GameObject resourceObj = new GameObject();
+        resourceObj.name = "ResourceManager";
+        resourceObj.transform.parent = transform;
+        resourceManager = resourceObj.AddComponent<ResourceManager>();
     }
 }

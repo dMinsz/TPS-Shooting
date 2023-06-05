@@ -7,13 +7,11 @@ public class Gun : MonoBehaviour
     [SerializeField] private float maxDistance;
     [SerializeField] private int damage;
     [SerializeField] private ParticleSystem muzzleEffect;
-    [SerializeField] private ParticleSystem hitEffect;
-    [SerializeField] private TrailRenderer bulletTrail;
-    
 
+    private ParticleSystem bulletEffect;
     public void Awake()
     {
-        //bulletEffect = GameManager.Resource.Load<ParticleSystem>("Prefabs/BulletHitEffect");
+        bulletEffect = GameManager.Resource.Load<ParticleSystem>("PreFabs/HitEffect");
     }
 
     private void OnDrawGizmos()
@@ -33,30 +31,34 @@ public class Gun : MonoBehaviour
         {
            
             IHittable target = hit.transform.GetComponent<IHittable>();
-            
+            target?.Hit(hit, damage);
+
             //맞은거 이펙트
-            var effect = Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal)); // 히트 된 위치의 직교하게 만들어준다.
-            effect.transform.parent = hit.transform;//맞은오브젝트 따라가기
+            ParticleSystem effect = GameManager.Resource.Instantiate(bulletEffect, hit.point, Quaternion.LookRotation(hit.normal), true);
+            effect.transform.parent = hit.transform.transform;
+            GameManager.Resource.Destroy(effect.gameObject, 3f);
 
             //총알 움직이는 궤도 이펙트
-            //var trail = Instantiate(bulletTrail,muzzleEffect.transform.position,Quaternion.identity);
-            StartCoroutine(TrailRoutine(muzzleEffect.transform.position, hit.point));
+            TrailRenderer trail = GameManager.Resource.Instantiate<TrailRenderer>("PreFabs/BulletTrail", muzzleEffect.transform.position, Quaternion.identity, true);
+            trail.transform.position = transform.position;
+            StartCoroutine(TrailRoutine(trail, trail.transform.position, hit.point));
+            GameManager.Resource.Destroy(trail.gameObject, 3f);
 
-            target?.Hit(hit, damage);
+           
 
         }
         else
         {
             //히트가안됬을때도 발사 궤적 이펙트는 나와야함
-            //TrailRenderer trail = Instantiate(bulletTrail, muzzleEffect.transform.position, Quaternion.identity);
-            StartCoroutine(TrailRoutine(muzzleEffect.transform.position, hit.point));
-          
+            TrailRenderer trail = GameManager.Resource.Instantiate<TrailRenderer>("PreFabs/BulletTrail", muzzleEffect.transform.position, Quaternion.identity, true);
+            trail.transform.position = transform.position;
+            StartCoroutine(TrailRoutine(trail, trail.transform.position, Camera.main.transform.forward * maxDistance));
+            GameManager.Resource.Destroy(trail.gameObject, 3f);
         }
     }
 
-    IEnumerator TrailRoutine(Vector3 startPoint, Vector3 endPoint)
+    IEnumerator TrailRoutine(TrailRenderer trail, Vector3 startPoint, Vector3 endPoint)
     {
-        TrailRenderer trail = Instantiate(bulletTrail, muzzleEffect.transform.position, Quaternion.identity);
         float totalTime = Vector2.Distance(startPoint, endPoint) / maxDistance;
 
         float time = 0;
@@ -64,11 +66,15 @@ public class Gun : MonoBehaviour
         {
             trail.transform.position = Vector3.Lerp(startPoint, endPoint, time);
             time += Time.deltaTime / totalTime;
-            
 
             yield return null;
         }
-
-        Destroy(trail.transform.gameObject);
     }
+
+    //IEnumerator ReleaseRoutine(ParticleSystem effect) 
+    //{
+    //    yield return new WaitForSeconds(3f);
+    //    GameManager.Pool.Release(effect);
+    //}
+
 }
